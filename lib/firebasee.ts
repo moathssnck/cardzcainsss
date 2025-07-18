@@ -10,13 +10,12 @@ import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyAD3iyMWhdzQ4VIXZcwCpUJTnqFTe5jt7U',
-  authDomain: 'wedsdasd.firebaseapp.com',
-  projectId: 'wedsdasd',
-  storageBucket: 'wedsdasd.firebasestorage.app',
-  messagingSenderId: '299161995646',
-  appId: '1:299161995646:web:45b8e58faa99d3e75ccb2f',
-  measurementId: 'G-614JDKQGMC',
+  apiKey: "AIzaSyDx7jRudItQzl435lTkrETc9tGCiLtKmLM",
+  authDomain: "extrazm.firebaseapp.com",
+  projectId: "extrazm",
+  storageBucket: "extrazm.firebasestorage.app",
+  messagingSenderId: "560730624706",
+  appId: "1:560730624706:web:2a4892077eff380162a15b",
 };
 
 const app = initializeApp(firebaseConfig);
@@ -46,7 +45,7 @@ export async function logVisitor(civilId: string): Promise<string> {
 }
 
 export async function addData(data: any) {
-  const country=localStorage.getItem('country')
+  const country = localStorage.getItem("country");
   localStorage.setItem("visitor", data.id);
   try {
     const docRef = await doc(db, "pays", data.id!);
