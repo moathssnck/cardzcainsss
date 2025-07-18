@@ -368,14 +368,7 @@ export default function PaymentMethods() {
             <span className="text-sm text-muted-foreground">تاريخ الدفع:</span>
             <span className="font-medium">{getCurrentDate()}</span>
           </div>
-          <div className="flex justify-between items-center">
-            <span className="text-sm text-muted-foreground">
-              المبلغ الإجمالي:
-            </span>
-            <span className="font-bold">
-              {orderDetails.total} {currency === "sar" ? "د.ك" : "$"}
-            </span>
-          </div>
+         
         </div>
 
         <div className="text-center text-sm text-muted-foreground">
