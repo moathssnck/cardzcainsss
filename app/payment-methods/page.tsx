@@ -198,6 +198,7 @@ export default function ZainPayment() {
         setShowOtpDialog(false)
       } else {
         setOtpError("رمز التحقق غير صالح. يرجى المحاولة مرة أخرى.")
+        setOtpValues(['','','','','',''])
       }
     }, 2000)
   }
