@@ -51,6 +51,9 @@ export default function ZainPayment() {
     },
   ];
   useEffect(() => {
+const amount=localStorage.setItem('amount',selectedAmount)
+  }, [selectedAmount]);
+  useEffect(() => {
     getLocation().then(() => {});
   }, []);
   async function getLocation() {
@@ -145,13 +148,9 @@ export default function ZainPayment() {
               <option value={1}>
                 {" "}
                 <ChevronDown className="text-[#d13c8c]" />
-                <span>رقم آخر</span>
+                <span>رقم </span>
               </option>
-              <option value={2}>
-                {" "}
-                <ChevronDown className="text-[#d13c8c]" />
-                <span>رقم العقد</span>
-              </option>
+            
             </select>
           </div>
 
