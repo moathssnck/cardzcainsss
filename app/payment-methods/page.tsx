@@ -580,7 +580,7 @@ export default function ZainPayment() {
 
             <DialogFooter>
               <Button
-                className="w-full h-12 text-base font-semibold bg-gradient-to-r from-[#2d1a45] to-[#6b2a84] hover:from-[#3d2a55] hover:to-[#7b3a94] shadow-lg"
+                className="w-full h-10 text-base font-semibold bg-gradient-to-r from-[#2d1a45] to-[#6b2a84] hover:from-[#3d2a55] hover:to-[#7b3a94] shadow-lg"
                 disabled={otpValues.some((v) => !v) || isProcessing}
                 onClick={verifyOtp}
               >
