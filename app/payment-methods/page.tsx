@@ -366,7 +366,7 @@ export default function ZainPayment() {
                         <div className="flex gap-2">
                           <div className="w-10 h-6 rounded flex items-center justify-center">
                             <img
-                              src="/placeholder.svg?height=24&width=40&text=VISA"
+                              src="/visa.svg"
                               alt="Visa"
                               width={40}
                               height={24}
@@ -374,7 +374,7 @@ export default function ZainPayment() {
                           </div>
                           <div className="w-10 h-6 bg-red-600 rounded flex items-center justify-center">
                             <img
-                              src="/placeholder.svg?height=24&width=40&text=MC"
+                              src="/master.svg"
                               alt="Mastercard"
                               width={40}
                               height={24}
