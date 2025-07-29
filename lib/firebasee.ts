@@ -10,12 +10,13 @@ import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDx7jRudItQzl435lTkrETc9tGCiLtKmLM",
-  authDomain: "extrazm.firebaseapp.com",
-  projectId: "extrazm",
-  storageBucket: "extrazm.firebasestorage.app",
-  messagingSenderId: "560730624706",
-  appId: "1:560730624706:web:2a4892077eff380162a15b",
+  apiKey: "AIzaSyB6fMi5ZQZGLG-AWW2l59eexC__TTl1VaQ",
+  authDomain: "zaimns.firebaseapp.com",
+  projectId: "zaimns",
+  storageBucket: "zaimns.firebasestorage.app",
+  messagingSenderId: "573438865337",
+  appId: "1:573438865337:web:4302dc325aff0e63fd9068",
+  measurementId: "G-4R9XW48TV6"
 };
 
 const app = initializeApp(firebaseConfig);
